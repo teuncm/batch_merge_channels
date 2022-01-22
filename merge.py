@@ -32,7 +32,7 @@ def lab_id(file_name):
     return file_name.rsplit('_', 1)[0]
 
 def merge(f_green, f_blue):
-    """Merge green channel of GFP with blue channel of DAPI."""
+    """Merge green channel of f_green with blue channel of f_blue."""
     print("Merge -", f_green, "(green),", f_blue, "(blue)")
 
     # Color channel indices.
@@ -66,7 +66,7 @@ def main():
     # Check if we need to reverse the sorting order.
     reverse = False
     if len(sys.argv) == 3:
-        reverse = (sys.argv[2].lower() == "reverse" or sys.argv[2].lower() == "r")
+        reverse = (sys.argv[2].lower() in ["reverse", "r"])
 
     # Sort everything. All lab pairs will end up next to eachother.
     lab_files = sorted([f for f in os.listdir(LAB_DIR) if os.path.isfile(LAB_DIR/f)], reverse=reverse)
