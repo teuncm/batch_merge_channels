@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 # Author: Teun Mathijssen
+# Link: https://github.com/teuncm/batch_merge_channels
 #
 # Instructions: 
-# 1) Put this entire folder in the root lab folder.
+# 1) Put this entire folder next to your lab folders.
 # 
 # 2) This program requires numpy and Pillow to run.
 #
 # 3) Run the following command:
-# python merge.py folder [reverse]
+# python merge.py lab_folder [reverse]
 
 import sys
 import os
@@ -18,7 +19,7 @@ from PIL import Image
 
 # Check number of arguments.
 if len(sys.argv) < 2:
-    print("Usage: python processing.py folder [reverse]"); exit(1)
+    print("Usage: python processing.py lab_folder [reverse]"); exit(1)
 elif len(sys.argv) > 3:
     print("Error: too many arguments!"); exit(1)
 
