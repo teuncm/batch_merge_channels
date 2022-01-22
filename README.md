@@ -7,6 +7,7 @@ JPG files need to be named in pairs for the program to run successfully. Example
 ```
 W1_G93A_D4_1_GFP.jpg
 W1_G93A_D4_1_H.jpg
+
 W1_G93A_D5_3_GFP.jpg
 W1_G93A_D5_3_H.jpg
 ```
