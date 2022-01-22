@@ -16,5 +16,5 @@ W1_G93A_D5_3_H.jpg
 
 Run the following command:
 ```
-python merge.py folder [reverse]
+python merge.py lab_folder [reverse]
 ```
