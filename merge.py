@@ -11,9 +11,6 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-# Number of channels in RGB image.
-NUM_CHANNELS_RGB = 3
-
 def lab_id(path):
     """Return lab id of file path."""
     return path.name.rsplit("_", 1)[0]
