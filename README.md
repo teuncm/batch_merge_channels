@@ -2,8 +2,6 @@
 
 Written for my gf's lab work. Batch merge a folder of red/green/blue stained cells (stained using PI/GFP/Hoechst/DAPI) like in ImageJ. Additionally, this repository contains ImageJ macros to adjust the contrast/brightness of a specific channel of the merged images.
 
-### Usage
-
 #### Execution
 Example for 2 stains in folder 'G93A_0C':
 ```
