@@ -33,7 +33,7 @@ Run the following command:
 python merge.py input_folder [stain_order] [num_stains]
 ```
 
-*Example for 2 stains in folder 'G93A_0C'*:
+**Example for 2 stains in folder 'G93A_0C'**:
 ```
 python merge.py ../G93A_0C 012 2
 ```
