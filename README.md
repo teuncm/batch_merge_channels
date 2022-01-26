@@ -4,6 +4,22 @@ Written for my gf's lab work. Batch merge a folder of red/green/blue stained cel
 
 ### Usage
 
+#### Execution
+**Example for 2 stains in folder 'G93A_0C'**:
+```
+python merge.py ../G93A_0C 012 2
+```
+
+The following command is used:
+```
+python merge.py input_folder [stain_order] [num_stains]
+```
+
+For detailed help information:
+```
+python merge.py -h
+```
+
 #### Naming
 Files in lab folders need to be named in groups for the program to run successfully.
 
@@ -25,20 +41,4 @@ D4_1_H.jpg
 D5_3_PI.jpg
 D5_3_GFP.jpg
 D5_3_H.jpg
-```
-
-#### Execution
-Run the following command:
-```
-python merge.py input_folder [stain_order] [num_stains]
-```
-
-**Example for 2 stains in folder 'G93A_0C'**:
-```
-python merge.py ../G93A_0C 012 2
-```
-
-For detailed help information:
-```
-python merge.py -h
 ```
