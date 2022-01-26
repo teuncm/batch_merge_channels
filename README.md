@@ -12,7 +12,7 @@ pip install Pillow
 #### Execution
 Example for 2 stains in folder 'G93A_0C':
 ```
-python merge.py ../G93A_0C 012 2
+python merge.py ../G93A_0C 021
 ```
 
 The following command is used:
