@@ -1,93 +1,94 @@
-#!/usr/bin/env python3
 # Author: Teun Mathijssen
 # Link: https://github.com/teuncm/batch_merge_channels
 #
-# Instructions: 
-# 1) Put this entire folder next to your lab folders.
-# 
-# 2) This program requires numpy and Pillow to run.
-#
-# 3) Run the following command:
-# python merge.py lab_folder [reverse]
+# Instructions: python merge.py -h
 
 import sys
-import os
+import argparse
+import itertools
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
 
-# Check number of arguments.
-if len(sys.argv) < 2:
-    print("Usage: python processing.py lab_folder [reverse]"); exit(1)
-elif len(sys.argv) > 3:
-    print("Error: too many arguments!"); exit(1)
+# Number of channels in RGB image.
+NUM_CHANNELS_RGB = 3
 
-# Set directories to operate in.
-LAB_DIR = Path(sys.argv[1]+"/")
-MERGE_DIR = Path(sys.argv[1]+"_merged/")
+def lab_id(path):
+    """Return lab id of file path."""
+    return path.name.rsplit("_", 1)[0]
 
-def lab_id(file_name):
-    """Return the lab id of the given file name."""
-    return file_name.rsplit('_', 1)[0]
+def merge(args, files_to_merge):
+    """Merge stain channels into a new image."""
+    print("MERGE")
 
-def merge(f_green, f_blue):
-    """Merge green channel of f_green with blue channel of f_blue."""
-    print("Merge -", f_green, "(green),", f_blue, "(blue)")
+    # Retrieve stain data.
+    stain_data = []
+    for stain_idx, f in enumerate(files_to_merge):
+        stain_data.append(np.array(Image.open(f)))
+        print(f"index {stain_idx+1}: {f.name}")
 
-    # Color channel indices.
-    CHANNEL_R = 0; CHANNEL_G = 1; CHANNEL_B = 2
-
-    # Open both lab images.
-    lab_green = np.array(Image.open(LAB_DIR/f_green))
-    lab_blue = np.array(Image.open(LAB_DIR/f_blue))
-
-    # Merge greens of lab_green with blues of lab_blue. Discard reds.
-    lab_merged = np.zeros(lab_green.shape, dtype=np.uint8)
-    lab_merged[:, :, CHANNEL_G] = lab_green[:, :, CHANNEL_G]
-    lab_merged[:, :, CHANNEL_B] = lab_blue[:, :, CHANNEL_B]
-
-    f_merged = lab_id(f_green)+"_merged.jpg"
-
-    print("Result -", f_merged)
     print("")
 
-    # Save the merged image.
-    Image.fromarray(lab_merged).save(Path(MERGE_DIR/f_merged))
+    # Verify stain correctness.
+    for a, b in itertools.combinations(files_to_merge, 2):
+        if lab_id(a) != lab_id(b):
+            print(f"IDs don't match!", file=sys.stderr); exit(1)
+
+    # Merge channels in user indicated order.
+    merged_data = np.zeros(stain_data[0].shape, dtype=np.uint8)
+    for channel, stain_idx in enumerate(args.stain_order):
+        stain_idx = int(stain_idx)
+
+        if stain_idx > args.num_stains:
+            print(f"Stain index {stain_idx} not found (max {args.num_stains})!", file=sys.stderr); exit(1)
+        if stain_idx != 0:
+            merged_data[:, :, channel] = stain_data[stain_idx-1][:, :, channel]
+
+    # Save the merged stains.
+    f_merged = lab_id(files_to_merge[0])+"_merged.jpg"
+    Image.fromarray(merged_data).save(Path(args.merge_dir/f_merged))
 
 def main():
-    # Go back to the root folder.
-    os.chdir(Path(".."))
+    parser = argparse.ArgumentParser(
+        description="Batch merge staining images like in ImageJ. Requires numpy and Pillow.")
+    parser.add_argument("input_folder", type=str,
+        help="Location of folder with lab images")
+    parser.add_argument("stain_order", type=str, default="012", nargs="?",
+        help="Stain RGB order (default 012)")
+    parser.add_argument("num_stains", type=int, default=2, nargs="?",
+        help="Number of stains used in lab (default 2)")
+    args = parser.parse_args()
 
-    # Proceed only if the lab directory exists.
-    if not os.path.isdir(LAB_DIR):
-        print("Error: lab directory not found!"); exit(1)
+    # Create full path to lab folder and merge folder.
+    args.lab_dir = Path.cwd()/Path(args.input_folder)
+    args.merge_dir = Path.cwd()/Path(args.input_folder+"_merged")
 
-    # Check if we need to reverse the sorting order.
-    reverse = False
-    if len(sys.argv) == 3:
-        reverse = (sys.argv[2].lower() in ["reverse", "r"])
+    # Proceed only if lab folder exists.
+    if not args.lab_dir.is_dir():
+        print(f"Lab folder {args.input_folder} not found!", file=sys.stderr); exit(1)
 
-    # Sort everything. All lab pairs will end up next to eachother.
-    lab_files = sorted([f for f in os.listdir(LAB_DIR) if os.path.isfile(LAB_DIR/f)], reverse=reverse)
+    # Sort files in lab folder. All lab pairs will end up next to eachother by name.
+    lab_files = [f for f in args.lab_dir.iterdir() if (args.lab_dir/f).is_file()]
+    lab_files.sort(key=lambda p: str(p).casefold())
 
-    # We will make steps of two, so the total number of files needs to be even.
-    if len(lab_files) % 2 != 0:
-        print("Error: incorrect number of lab images!"); exit(1)
+    # Verify number of files in lab folder.
+    if len(lab_files) % args.num_stains != 0:
+        print(f"Number of lab images needs to be a multiple of {args.num_stains}!", file=sys.stderr); exit(1)
 
-    # Make the merge directory.
-    os.makedirs(MERGE_DIR, exist_ok=True)
+    # Create merge folder.
+    args.merge_dir.mkdir(exist_ok=True)
 
-    # Go through all lab pairs and merge the image channels.
-    for i in range(0, len(lab_files), 2):
-        f1 = lab_files[i]; f2 = lab_files[i+1]
-        
-        if not lab_id(f1) == lab_id(f2):
-            print("Error: lab names don't match!", f1, f2); exit(1)
+    # Go through all lab file groups and merge stain channels.
+    for i in range(0, len(lab_files), args.num_stains):
+        # Gather files to merge.
+        files_to_merge = []
+        for j in range(0, args.num_stains):
+            files_to_merge.append(lab_files[i+j])
 
-        merge(f1, f2)
+        merge(args, files_to_merge)
 
-    print("Done merge from", LAB_DIR, "to", MERGE_DIR)
+    print(f"Done merging! Merged images can be found in '{args.merge_dir.name}'.")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
