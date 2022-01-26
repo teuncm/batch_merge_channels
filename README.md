@@ -5,7 +5,7 @@ Written for my gf's lab work. Batch merge a folder of red/green/blue stained cel
 ### Usage
 
 #### Execution
-**Example for 2 stains in folder 'G93A_0C'**:
+Example for 2 stains in folder 'G93A_0C':
 ```
 python merge.py ../G93A_0C 012 2
 ```
