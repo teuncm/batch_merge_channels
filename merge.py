@@ -44,7 +44,7 @@ def merge(args, files_to_merge):
 
     # Save the merged stains.
     f_merged = lab_id(files_to_merge[0])+"_merged.jpg"
-    Image.fromarray(merged_data).save(Path(args.merge_dir/f_merged))
+    Image.fromarray(merged_data).save(Path(args.merge_dir/f_merged), subsampling=0, quality=100)
 
 def main():
     parser = argparse.ArgumentParser(
