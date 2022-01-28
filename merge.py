@@ -52,14 +52,14 @@ def main():
     parser.add_argument("input_folder", type=str,
         help="Location of folder with lab images")
     parser.add_argument("stain_order", type=str, default="012", nargs="?",
-        help="Stain RGB order (default 012)")
+        help="Stain RGB order (default 012) (0 here means: don't use the red channel)")
     parser.add_argument("num_stains", type=int, default=2, nargs="?",
         help="Number of stains used in lab (default 2)")
     args = parser.parse_args()
 
     # Create full path to lab folder and merge folder.
     args.lab_dir = Path.cwd()/Path(args.input_folder)
-    args.merge_dir = Path.cwd()/Path(args.input_folder+"_merged")
+    args.merge_dir = Path.cwd()/Path(args.input_folder.rstrip("/").rstrip("\\")+"_merged")
 
     # Proceed only if lab folder exists.
     if not args.lab_dir.is_dir():
