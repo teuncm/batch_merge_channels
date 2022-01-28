@@ -6,7 +6,7 @@ Written for my gf's lab work. Batch merge a folder of red/green/blue stained cel
 Works on Windows, macOS and Linux. Install numpy and Pillow, for example by installing [Anaconda](https://www.anaconda.com/products/individual).
 
 #### Execution
-Example for 3 stains in example folder 'lab_results':
+Example for 3 stains in given folder 'lab_results':
 ```
 python merge.py lab_results 321 3
 ```
