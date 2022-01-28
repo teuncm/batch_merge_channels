@@ -3,11 +3,7 @@
 Written for my gf's lab work. Batch merge a folder of red/green/blue stained cells (stained using PI/GFP/Hoechst/DAPI) like in ImageJ. Additionally, this repository contains ImageJ macros to adjust the contrast/brightness of a specific channel of the merged images.
 
 #### Requirements
-Works on Windows, macOS and Linux. Install numpy and Pillow, for example by using:
-```
-pip install numpy
-pip install Pillow
-```
+Works on Windows, macOS and Linux. Install numpy and Pillow, for example by installing (Anaconda)[https://www.anaconda.com/products/individual].
 
 #### Execution
 Example for 2 stains in folder 'G93A_0C':
